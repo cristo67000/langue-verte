@@ -1,0 +1,20 @@
+{
+  "id": "./",
+  "name": "La Langue verte — dictionnaire d’argot",
+  "short_name": "Langue verte",
+  "description": "Dictionnaire d’argot hors ligne : sens, étymologie, synonymes et contraires, citations, expressions, du verlan à la langue verte du XIXᵉ siècle. Recherche du français vers l’argot, fiches de révision et notes personnelles. Tout reste sur l’appareil, sans compte ni publicité.",
+  "lang": "fr",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f7f6f0",
+  "theme_color": "#22614a",
+  "categories": ["education", "books", "reference"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

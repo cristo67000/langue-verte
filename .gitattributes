@@ -1,0 +1,9 @@
+* text=auto eol=lf
+*.png binary
+*.webp binary
+
+# Les fichiers de données sont lus par l'application, pas par un éditeur : ils
+# doivent rester en LF quelle que soit la machine. Marqués « texte », git les
+# convertirait en CRLF au clonage sous Windows, et le retour chariot traînant
+# rendrait introuvable le lemme « cheval\r », sans le moindre signal.
+data/** -text

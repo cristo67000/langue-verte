@@ -1,0 +1,7 @@
+build/sources/
+build/rapport.txt
+build/captures/
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db

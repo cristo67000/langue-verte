@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <!-- L'application ne parle à personne : ni police distante, ni mesure
+       d'audience. `connect-src 'self'` suffit, et le dit. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; manifest-src 'self'; base-uri 'self'; form-action 'none'; object-src 'none'">
+  <meta name="referrer" content="no-referrer">
+  <meta name="description" content="Dictionnaire d’argot hors ligne : sens, étymologie, synonymes et contraires, citations, expressions, du verlan à la langue verte du XIXᵉ siècle. Fiches de révision et notes personnelles. Tout reste sur l’appareil.">
+  <meta name="theme-color" content="#22614a">
+  <!-- La version de la coquille, la même que dans sw.js : à l'installation,
+       le service worker refuse une page d'une autre version. -->
+  <meta name="application-version" content="v1.0.0">
+  <title>La Langue verte — dictionnaire d’argot</title>
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Langue verte">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="La Langue verte">
+  <meta property="og:title" content="La Langue verte — dictionnaire d’argot">
+  <meta property="og:description" content="Argot, verlan et langue verte : sens, étymologie, synonymes, citations, expressions — et des fiches de révision. Hors ligne, sans compte, sans publicité.">
+  <meta property="og:url" content="https://cristo67000.github.io/langue-verte/">
+  <meta property="og:image" content="https://cristo67000.github.io/langue-verte/icons/apercu-1200x630.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="La Langue verte — dictionnaire d’argot hors ligne">
+  <meta property="og:locale" content="fr_FR">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon-192.png" type="image/png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+
+  <div id="demarrage" role="status">
+    <div class="marque">La Langue verte</div>
+    <p>Ouverture du dictionnaire…</p>
+  </div>
+
+  <header id="barre">
+    <h1><span class="marque-petite">La Langue verte</span></h1>
+    <p class="sous-titre">dictionnaire d’argot</p>
+  </header>
+
+  <main id="scene">
+
+    <!-- ————— Chercher ————— -->
+    <section id="vue-chercher" class="vue">
+      <div id="bloc-recherche">
+        <input id="q" type="search" autocomplete="off" autocapitalize="off"
+               autocorrect="off" spellcheck="false" enterkeyhint="search"
+               placeholder="Un mot d’argot… ou un mot français" aria-label="Chercher un mot d’argot, une expression ou un mot français">
+        <button id="q-vider" type="button" aria-label="Effacer" hidden>✕</button>
+      </div>
+
+      <div id="accueil">
+        <p id="etat-hors-ligne" class="discret" hidden></p>
+        <section id="du-jour" class="carte-du-jour" hidden></section>
+        <div id="recents"></div>
+        <section id="accueil-themes" hidden></section>
+        <p class="essayez discret">Essayez : <span id="suggestions"></span></p>
+        <p class="astuce discret">Tapez aussi un mot de français courant — <em>argent</em>, <em>tête</em>,
+          <em>partir</em> — pour trouver comment on le dit en argot.</p>
+      </div>
+
+      <section id="equivalents" class="bloc-equivalents" hidden></section>
+      <ul id="resultats" class="liste-resultats" role="listbox" aria-label="Mots" hidden></ul>
+      <div id="resultats-expressions" hidden></div>
+      <div id="rien" hidden>
+        <p>Aucun mot du dictionnaire ne commence ainsi.</p>
+        <p class="discret" id="rien-conseil"></p>
+      </div>
+      <button id="b-ajouter-depuis-recherche" type="button" class="bouton-discret ajouter-mot" hidden></button>
+    </section>
+
+    <!-- ————— Explorer ————— -->
+    <section id="vue-explorer" class="vue" hidden>
+      <div id="explorer-accueil">
+        <h2>Explorer l’argot</h2>
+        <p class="discret">Par milieu, par époque, par région : l’argot des casernes et celui des
+          écrans, la langue verte des voleurs de 1880 et le joual de Montréal.</p>
+        <div id="liste-themes" class="grille-themes"></div>
+      </div>
+      <div id="explorer-theme" hidden>
+        <button id="b-themes-retour" type="button" class="lien-discret retour-themes">← Tous les thèmes</button>
+        <h2 id="theme-titre"></h2>
+        <p id="theme-description" class="discret"></p>
+        <div class="segments" role="group" id="theme-ordre" aria-label="Ordre de la liste">
+          <button type="button" data-ordre="usage" aria-pressed="true">Les plus courants</button>
+          <button type="button" data-ordre="alpha" aria-pressed="false">De A à Z</button>
+        </div>
+        <ul id="theme-mots" class="liste-resultats"></ul>
+        <button id="theme-plus" type="button" class="bouton-discret large" hidden></button>
+      </div>
+    </section>
+
+    <!-- ————— Réviser ————— -->
+    <section id="vue-reviser" class="vue" hidden>
+      <div id="revision-accueil">
+        <h2>Fiches de révision</h2>
+        <div id="revision-compteurs" class="compteurs"></div>
+        <button id="b-commencer" type="button" class="bouton-principal">Commencer</button>
+        <div id="revision-vide" hidden>
+          <p>Aucune fiche pour l’instant. Ouvrez un mot et touchez
+             « Ajouter aux fiches » : il reviendra ici au bon moment,
+             de plus en plus espacé à mesure que vous le savez.</p>
+          <button id="b-vers-recherche" type="button" class="bouton-discret">Chercher un mot</button>
+        </div>
+        <p id="revision-rien-du-jour" class="discret" hidden>Rien à revoir pour l’instant — tout est à jour.
+          Vous pouvez tout de même vous entraîner.</p>
+        <button id="b-entrainement" type="button" class="bouton-discret large" hidden>S’entraîner sur toutes mes fiches</button>
+
+        <section id="bloc-progres" class="bloc-leger"></section>
+      </div>
+
+      <div id="seance" hidden>
+        <div class="seance-tete">
+          <div class="jauge"><div id="seance-jauge"></div></div>
+          <span id="seance-compte" class="discret"></span>
+          <button id="b-arreter" type="button" class="lien-discret">Arrêter</button>
+        </div>
+        <p id="seance-libre" class="bandeau-libre" hidden>Entraînement libre : vos réponses ne changent pas le calendrier des fiches.</p>
+        <p id="seance-consigne" class="consigne"></p>
+        <div id="seance-enonce"></div>
+        <div id="seance-zone"></div>
+        <div id="seance-verdict" hidden>
+          <p id="verdict-texte"></p>
+          <p id="verdict-remarque" class="discret"></p>
+          <div id="verdict-boutons"></div>
+          <div id="verdict-fiche"></div>
+        </div>
+      </div>
+
+      <div id="seance-bilan" hidden>
+        <h2>Séance terminée</h2>
+        <div id="bilan-chiffres" class="compteurs"></div>
+        <p id="bilan-texte" class="discret"></p>
+        <button id="b-continuer" type="button" class="bouton-principal">Continuer</button>
+        <button id="b-terminer" type="button" class="bouton-discret large">Revenir aux fiches</button>
+      </div>
+    </section>
+
+    <!-- ————— Carnet ————— -->
+    <section id="vue-carnet" class="vue" hidden>
+      <h2>Mon carnet</h2>
+      <div class="segments" role="tablist" id="carnet-onglets">
+        <button type="button" role="tab" data-rubrique="mots" aria-pressed="true">Mes mots</button>
+        <button type="button" role="tab" data-rubrique="notes" aria-pressed="false">Mes notes</button>
+        <button type="button" role="tab" data-rubrique="fiches" aria-pressed="false">Mes fiches</button>
+      </div>
+      <input id="carnet-filtre" type="search" autocomplete="off" autocapitalize="off"
+             spellcheck="false" placeholder="Filtrer…" aria-label="Filtrer la liste">
+      <div id="carnet-contenu"></div>
+    </section>
+
+    <!-- ————— Réglages ————— -->
+    <section id="vue-reglages" class="vue" hidden>
+      <h2>Réglages</h2>
+
+      <section class="bloc">
+        <h3>Dictionnaire hors ligne</h3>
+        <p id="etat-dictionnaire" class="discret"></p>
+        <div id="zone-telechargement"></div>
+      </section>
+
+      <section class="bloc">
+        <h3>Fiches de révision</h3>
+        <label class="champ-nombre">
+          <span>Nouvelles fiches par jour</span>
+          <input type="number" id="reglage-nouveautes" min="0" max="100" step="5" inputmode="numeric">
+        </label>
+        <p class="discret">Les fiches déjà commencées reviennent toujours à leur date : ce nombre ne règle que l’arrivée des nouvelles.</p>
+
+        <h4>Ce que demandent les fiches</h4>
+        <div class="segments" role="group" id="reglage-sens">
+          <button type="button" data-sens="les-deux" aria-pressed="false">Les deux</button>
+          <button type="button" data-sens="def" aria-pressed="false">Le sens</button>
+          <button type="button" data-sens="mot" aria-pressed="false">Le mot</button>
+        </div>
+        <p class="discret">« Le sens » : voir le mot d’argot, retrouver ce qu’il veut dire. « Le mot » : lire la
+          définition, retrouver le mot d’argot. Ne vaut que pour les fiches créées ensuite.</p>
+
+        <h4>Forme des questions</h4>
+        <div class="segments" role="group" id="reglage-mode">
+          <button type="button" data-mode="varie" aria-pressed="false">Variée</button>
+          <button type="button" data-mode="cartes" aria-pressed="false">Recto-verso</button>
+        </div>
+        <p class="discret">« Variée » mêle les fiches recto-verso, les choix multiples, l’écriture du mot et
+          les phrases à trou, de plus en plus exigeants. « Recto-verso » : on retourne la fiche et l’on
+          dit soi-même si on savait.</p>
+      </section>
+
+      <section class="bloc">
+        <h3>Prononciation</h3>
+        <label class="bascule">
+          <input type="checkbox" id="reglage-voix">
+          <span>Boutons d’écoute</span>
+        </label>
+        <p class="discret">La lecture passe par la voix française de l’appareil, sans réseau. Une voix de
+          synthèse ne connaît pas l’argot : elle lit les mots comme elle les voit écrits.</p>
+        <div id="zone-voix"></div>
+      </section>
+
+      <section class="bloc">
+        <h3>Sauvegarde</h3>
+        <p class="discret">Vos fiches, vos notes et vos mots ne quittent jamais l’appareil. Pour les garder
+          en changeant de téléphone ou d’ordinateur, enregistrez-les dans un fichier, puis rechargez ce
+          fichier sur l’autre appareil.</p>
+        <div id="zone-sauvegarde"></div>
+      </section>
+
+      <section class="bloc" id="bloc-installer" hidden>
+        <h3>Installer l’application</h3>
+        <div id="zone-installer"></div>
+      </section>
+
+      <section class="bloc">
+        <h3>Partager</h3>
+        <div id="zone-partager"></div>
+      </section>
+
+      <section class="bloc">
+        <h3>À propos</h3>
+        <p class="discret" id="apropos-versions"></p>
+        <div class="ligne-maj">
+          <button id="b-verifier-maj" type="button" class="bouton-discret">Rechercher une mise à jour</button>
+          <span id="etat-maj" class="discret"></span>
+        </div>
+        <p class="discret">Définitions, étymologies, citations, synonymes et expressions : le
+          <a href="https://fr.wiktionary.org/" rel="noopener">Wiktionnaire</a>
+          (licence CC BY-SA 4.0), par l’extraction de
+          <a href="https://kaikki.org/" rel="noopener">wiktextract</a>. Langue verte du XIXᵉ siècle :
+          les dictionnaires d’Alfred Delvau (1883), de Lorédan Larchey (1881) et de Charles Virmaître
+          (1894), domaine public, par le <a href="https://www.gutenberg.org/" rel="noopener">Project
+          Gutenberg</a> et <a href="https://fr.wikisource.org/" rel="noopener">Wikisource</a>.
+          Fréquences d’usage : <a href="http://www.lexique.org/" rel="noopener">Lexique 3.83</a>.</p>
+        <p class="discret">Un dictionnaire d’argot contient des mots grossiers, injurieux ou
+          blessants : ils y figurent pour être compris, avec leur marque d’usage — <em>vulgaire</em>,
+          <em>injurieux</em>, <em>péjoratif</em>. L’accueil ne les propose jamais de lui-même.</p>
+        <p><a href="confidentialite.html">Confidentialité et sources</a></p>
+      </section>
+    </section>
+
+  </main>
+
+  <div id="mise-a-jour" role="status" aria-live="polite" hidden>
+    <p id="mise-a-jour-texte">Une nouvelle version est prête.</p>
+    <div class="maj-boutons">
+      <button id="b-mettre-a-jour" type="button" class="bouton-principal">Mettre à jour</button>
+      <button id="b-maj-plus-tard" type="button" class="lien-discret">Plus tard</button>
+    </div>
+  </div>
+
+  <div id="annonce" role="status" aria-live="polite" hidden></div>
+
+  <nav id="onglets" aria-label="Sections">
+    <button type="button" data-vue="chercher" aria-current="true">
+      <span class="pictogramme" aria-hidden="true">⌕</span><span>Chercher</span>
+    </button>
+    <button type="button" data-vue="explorer">
+      <span class="pictogramme" aria-hidden="true">❖</span><span>Explorer</span>
+    </button>
+    <button type="button" data-vue="reviser">
+      <span class="pictogramme" aria-hidden="true">❏</span><span>Réviser</span><span id="pastille-dues" class="pastille-onglet" hidden></span>
+    </button>
+    <button type="button" data-vue="carnet">
+      <span class="pictogramme" aria-hidden="true">✎</span><span>Carnet</span>
+    </button>
+    <button type="button" data-vue="reglages">
+      <span class="pictogramme" aria-hidden="true">⚙</span><span>Réglages</span>
+    </button>
+  </nav>
+
+  <aside id="fiche" hidden aria-modal="true" role="dialog" aria-label="Fiche du mot">
+    <div id="fiche-contenu"></div>
+  </aside>
+
+  <aside id="panneau-perso" hidden aria-modal="true" role="dialog" aria-label="Mon mot">
+    <div id="formulaire-perso"></div>
+  </aside>
+
+  <script src="js/outils.js"></script>
+  <script src="js/lexique.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/voix.js"></script>
+  <script src="js/revision.js"></script>
+  <script src="js/notes.js"></script>
+  <script src="js/perso.js"></script>
+  <script src="js/motsvifs.js"></script>
+  <script src="js/fiche.js"></script>
+  <script src="js/exercices.js"></script>
+  <script src="js/seance.js"></script>
+  <script src="js/carnet.js"></script>
+  <script src="js/explorer.js"></script>
+  <script src="js/sauvegarde.js"></script>
+  <script src="js/paquets.js"></script>
+  <script src="js/installer.js"></script>
+  <script src="js/miseajour.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/demarrage.js"></script>
+</body>
+</html>

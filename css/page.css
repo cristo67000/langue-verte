@@ -1,0 +1,18 @@
+/* Page annexe (confidentialité et sources) : du texte, rien d'autre. */
+:root { color-scheme: light dark; }
+body {
+  margin: 0 auto;
+  padding: 2rem 1.25rem 4rem;
+  max-width: 40rem;
+  background: #f7f6f0;
+  color: #1b1e1b;
+  font: 16px/1.65 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+@media (prefers-color-scheme: dark) { body { background: #121614; color: #e7ece8; } }
+h1 { font-size: 1.5rem; margin: 0 0 1.5rem; font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif; }
+h2 { font-size: 1.1rem; margin: 2rem 0 .5rem; }
+a { color: #22614a; }
+@media (prefers-color-scheme: dark) { a { color: #86cfa6; } }
+.retour { display: inline-block; margin-bottom: 1.5rem; }
+code { font-size: .92em; }
+h3 { font-size: 1rem; margin: 1.4rem 0 .4rem; }

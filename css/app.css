@@ -1,0 +1,733 @@
+/*
+ * La Langue verte — feuille de style.
+ *
+ * Conçue pour un téléphone tenu d'une main : cibles larges, texte lisible sans
+ * lunettes, barre d'onglets au pouce. Sur un ordinateur (à partir de 64 rem),
+ * les onglets passent dans une colonne à gauche et la fiche s'ouvre à droite
+ * de la liste, qui reste lisible et cliquable — voir la fin du fichier.
+ *
+ * Deux familles de caractères, et ce n'est pas une coquetterie : le texte du
+ * dictionnaire — vedettes, définitions, citations — est composé en caractères
+ * à empattements, comme dans un dictionnaire imprimé ; l'interface — boutons,
+ * onglets, réglages — en caractères sans empattements. On distingue ainsi d'un
+ * coup d'œil ce qu'on lit de ce sur quoi on agit. Aucune police n'est
+ * téléchargée : ce sont celles du système.
+ */
+
+:root {
+  --papier: #f7f6f0;
+  --papier-releve: #ffffff;
+  --encre: #1b1e1b;
+  --encre-douce: #4f5650;
+  --encre-tres-douce: #7d857e;
+  --trait: #dfe3dc;
+  --accent: #22614a;
+  --accent-fort: #174835;
+  --accent-clair: #e4f0e9;
+  --sur-accent: #ffffff;
+  --or: #9a6b1f;
+  --or-clair: #f6eedd;
+  --rude: #a2402f;
+  --rude-clair: #f8e9e5;
+  --bien: #2f7d32;
+  --moyen: #a36a00;
+  --mal: #b3372f;
+  --bien-fond: #e9f5e9;
+  --mal-fond: #fbeae8;
+  --ombre: 0 1px 3px rgba(27, 30, 27, .08), 0 6px 20px rgba(27, 30, 27, .06);
+  --rayon: 12px;
+  --barre-h: 3.9rem;
+  --rail: 6.2rem;
+  --colonne: clamp(19rem, 34vw, 30rem);
+  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", "Noto Serif",
+    Georgia, serif;
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --papier: #121614;
+    --papier-releve: #1a201d;
+    --encre: #e7ece8;
+    --encre-douce: #b1bab3;
+    --encre-tres-douce: #7f8a82;
+    --trait: #2b332e;
+    --accent: #86cfa6;
+    --accent-fort: #a8e2c0;
+    --accent-clair: #1c2e25;
+    --sur-accent: #121614;
+    --or: #d9ad62;
+    --or-clair: #2d2617;
+    --rude: #f0998a;
+    --rude-clair: #33201d;
+    --bien: #8fd694;
+    --moyen: #e0b458;
+    --mal: #f08f86;
+    --bien-fond: #1b2a1d;
+    --mal-fond: #33201e;
+    --ombre: 0 1px 3px rgba(0, 0, 0, .5), 0 6px 20px rgba(0, 0, 0, .35);
+  }
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+[hidden] { display: none !important; }
+
+body {
+  margin: 0;
+  background: var(--papier);
+  color: var(--encre);
+  font: 16px/1.5 var(--sans);
+  padding-bottom: calc(var(--barre-h) + env(safe-area-inset-bottom));
+  overscroll-behavior-y: none;
+}
+body.fiche-ouverte, body.panneau-ouvert { overflow: hidden; }
+
+h1, h2, h3, h4 { line-height: 1.25; }
+h2 { font-size: 1.3rem; margin: 1rem 0 .8rem; }
+a { color: var(--accent); }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { -webkit-tap-highlight-color: transparent; }
+
+.discret { color: var(--encre-tres-douce); font-size: .9rem; }
+
+/* ————— Écran d'ouverture ————— */
+
+#demarrage {
+  position: fixed; inset: 0; z-index: 80;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .6rem;
+  background: var(--papier); color: var(--encre-douce); padding: 1rem; text-align: center;
+  transition: opacity .25s ease;
+}
+#demarrage.parti { opacity: 0; pointer-events: none; }
+#demarrage .marque { font-family: var(--serif); font-size: 2rem; color: var(--accent); font-style: italic; }
+
+/* ————— En-tête ————— */
+
+#barre {
+  padding: calc(env(safe-area-inset-top) + .7rem) 1rem .4rem;
+  display: flex; align-items: baseline; gap: .6rem; flex-wrap: wrap;
+  max-width: 46rem; margin: 0 auto;
+}
+#barre h1 { margin: 0; font-size: 1.35rem; }
+.marque-petite { font-family: var(--serif); font-style: italic; color: var(--accent); font-weight: 600; }
+#barre .sous-titre { margin: 0; color: var(--encre-tres-douce); font-size: .85rem; }
+
+#scene { max-width: 46rem; margin: 0 auto; padding: 0 1rem 2rem; }
+
+/* ————— Recherche ————— */
+
+#bloc-recherche { position: relative; margin: .3rem 0 1rem; }
+#q {
+  width: 100%;
+  padding: .9rem 2.8rem .9rem 1rem;
+  font-size: 1.1rem;
+  font-family: var(--serif);
+  background: var(--papier-releve);
+  border: 1px solid var(--trait);
+  border-radius: var(--rayon);
+  box-shadow: var(--ombre);
+  -webkit-appearance: none; appearance: none;
+}
+#q:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
+#q::-webkit-search-cancel-button { display: none; }
+#q-vider {
+  position: absolute; right: .4rem; top: 50%; transform: translateY(-50%);
+  width: 2.3rem; height: 2.3rem; border: 0; border-radius: 50%;
+  background: transparent; color: var(--encre-tres-douce); cursor: pointer;
+}
+#q-vider:hover { background: var(--accent-clair); }
+
+.liste-resultats { list-style: none; margin: 0; padding: 0; }
+.resultat {
+  display: flex; flex-direction: column; gap: .1rem;
+  width: 100%; text-align: left;
+  padding: .65rem .8rem; min-height: 3rem;
+  border: 0; border-bottom: 1px solid var(--trait);
+  background: transparent; cursor: pointer;
+}
+.resultat:hover, .resultat:focus-visible { background: var(--accent-clair); outline: none; }
+.resultat-tete { display: flex; align-items: baseline; gap: .5rem; flex-wrap: wrap; }
+.resultat .mot { font-family: var(--serif); font-size: 1.12rem; font-weight: 600; }
+.nature-courte { font-family: var(--serif); font-style: italic; color: var(--encre-tres-douce); font-size: .9rem; }
+.resultat .via { color: var(--encre-tres-douce); font-size: .8rem; }
+.resultat .apercu { color: var(--encre-douce); font-size: .92rem; font-family: var(--serif);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+#resultats-expressions { margin-top: 1.2rem; }
+
+.pastille {
+  font-size: .68rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
+  padding: .1rem .4rem; border-radius: 4px;
+  background: var(--accent-clair); color: var(--accent);
+}
+
+#rien { padding: 1.5rem .5rem .5rem; text-align: center; }
+.ajouter-mot { display: block; margin: 1rem auto; }
+
+/* ————— Accueil ————— */
+
+.carte-du-jour {
+  margin: .4rem 0 1.4rem; padding: 1rem 1.1rem;
+  background: var(--papier-releve); border: 1px solid var(--trait);
+  border-left: 4px solid var(--accent);
+  border-radius: var(--rayon); box-shadow: var(--ombre); cursor: pointer;
+}
+.du-jour-titre { margin: 0; font-size: .75rem; text-transform: uppercase; letter-spacing: .08em;
+  color: var(--accent); font-weight: 700; }
+.du-jour-mot { margin: .2rem 0 .3rem; display: flex; gap: .6rem; align-items: baseline; flex-wrap: wrap; }
+.du-jour-mot > span:first-child { font-family: var(--serif); font-size: 1.6rem; font-weight: 600; }
+.du-jour-def { margin: 0 0 .4rem; font-family: var(--serif); font-size: 1.02rem; }
+.du-jour-etym { margin: 0 0 .3rem; color: var(--encre-douce); font-size: .9rem; font-style: italic; font-family: var(--serif); }
+
+#etat-hors-ligne { margin: 0 0 .8rem; }
+
+.rubrique {
+  margin: 1.6rem 0 .6rem;
+  font-size: .78rem; text-transform: uppercase; letter-spacing: .07em;
+  color: var(--encre-tres-douce); font-weight: 700;
+}
+
+.voisins { display: flex; flex-wrap: wrap; gap: .4rem; }
+.voisin, .suggestion {
+  border: 1px solid var(--trait); background: var(--papier-releve);
+  border-radius: 999px; padding: .4rem .85rem; cursor: pointer;
+  font-family: var(--serif); font-size: 1rem;
+}
+.voisin:hover, .suggestion:hover { border-color: var(--accent); color: var(--accent); }
+button.voisin { color: var(--accent-fort); border-color: color-mix(in srgb, var(--accent) 30%, var(--trait)); }
+.voisin.sans-fiche { cursor: default; color: var(--encre-tres-douce); border-style: dashed; }
+.essayez { margin-top: 1.6rem; line-height: 2.4; }
+.suggestion { margin: 0 .25rem .3rem 0; }
+
+/* ————— Fiche ————— */
+
+#fiche, #panneau-perso {
+  position: fixed; inset: 0; z-index: 30;
+  background: var(--papier);
+  overflow-y: auto; -webkit-overflow-scrolling: touch;
+  padding: 0 1rem calc(3rem + env(safe-area-inset-bottom));
+}
+#panneau-perso { z-index: 40; }
+#fiche-contenu, #formulaire-perso { max-width: 46rem; margin: 0 auto; }
+
+.fiche-tete {
+  position: sticky; top: 0; z-index: 2;
+  display: flex; align-items: center; gap: .5rem;
+  padding: calc(env(safe-area-inset-top) + .5rem) 0 .4rem;
+  background: linear-gradient(var(--papier) 82%, transparent);
+}
+.fiche-tete .espace { flex: 1; }
+.fiche-fermer, .fiche-retour {
+  border: 1px solid var(--trait); background: var(--papier-releve);
+  border-radius: 999px; padding: .5rem 1rem; cursor: pointer; min-height: 2.6rem;
+  max-width: 60vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.fiche-retour { font-family: var(--serif); }
+
+.vedette { display: flex; align-items: baseline; flex-wrap: wrap; gap: .5rem; margin: .3rem 0 .1rem; }
+.vedette-mot { margin: 0; font-family: var(--serif); font-size: 2.3rem; font-weight: 600; line-height: 1.1;
+  overflow-wrap: anywhere; }
+.ecouter {
+  border: 1px solid var(--trait); background: var(--papier-releve); color: var(--accent);
+  border-radius: 999px; width: 2.5rem; height: 2.5rem; cursor: pointer; font-size: 1rem;
+  flex: none;
+}
+.ecouter[disabled] { opacity: .4; cursor: default; }
+.ecouter-phrase {
+  border: 0; background: transparent; color: var(--encre-tres-douce);
+  cursor: pointer; padding: 0 .3rem; margin-left: .2rem; font-size: .85rem;
+}
+.ecouter-phrase:hover { color: var(--accent); }
+.ecouter-phrase[disabled] { display: none; }
+
+.infos { display: flex; flex-wrap: wrap; gap: .4rem .9rem; align-items: center; margin: .2rem 0 1rem;
+  color: var(--encre-douce); }
+.api { font-family: "Segoe UI", "Noto Sans", system-ui, sans-serif; }
+.frequence { font-size: .85rem; color: var(--encre-tres-douce); }
+.frequence .points { color: var(--accent); letter-spacing: .05em; }
+
+.actions-fiche { display: flex; gap: .5rem; flex-wrap: wrap; margin: 0 0 1.4rem; }
+.actions-fiche .apprendre { flex: 1 1 12rem; width: auto; }
+.apprendre.suivi { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
+
+.lecture { margin: 0 0 1.2rem; padding: 0 0 1rem; border-bottom: 1px solid var(--trait); }
+.nature { margin: 0 0 .4rem; font-family: var(--serif); font-style: italic; font-size: 1.08rem; color: var(--accent); }
+.numero-lecture { font-style: normal; font-weight: 700; margin-right: .2rem; }
+.formes { margin: 0 0 .7rem; color: var(--encre-douce); font-size: .95rem; }
+.formes b { color: var(--encre); font-family: var(--serif); font-weight: 600; }
+.forme-libelle { font-style: italic; font-size: .88rem; }
+
+.sens-liste { list-style: none; margin: 0; padding: 0; }
+.sens { display: flex; gap: .5rem; margin: 0 0 .9rem; }
+.sous-sens { margin-left: 1.4rem; }
+.numero-sens { flex: none; min-width: 1.4rem; font-weight: 700; color: var(--accent); font-family: var(--serif); }
+.sens-corps { flex: 1; min-width: 0; }
+.definition { margin: 0; font-family: var(--serif); font-size: 1.07rem; line-height: 1.5; }
+.marques { display: flex; flex-wrap: wrap; gap: .25rem; margin: 0 0 .15rem; }
+.marque {
+  font-size: .76rem; font-style: italic; padding: .05rem .45rem; border-radius: 999px;
+  background: var(--accent-clair); color: var(--accent-fort);
+}
+.marque-discrete { font-style: italic; color: var(--encre-tres-douce); font-size: .9em; }
+.renvoi { margin: .2rem 0 0; font-size: .95rem; }
+.note-usage { margin: .35rem 0 0; font-size: .9rem; color: var(--encre-douce); }
+.note-usage::before { content: "Note — "; font-weight: 600; }
+
+.citation {
+  margin: .45rem 0 0; padding: .1rem 0 .1rem .75rem;
+  border-left: 2px solid var(--trait);
+}
+.citation-texte { margin: 0; font-family: var(--serif); font-style: italic; color: var(--encre-douce); font-size: 1rem; }
+.citation-source { margin: .1rem 0 0; font-size: .76rem; color: var(--encre-tres-douce); }
+mark.cible { background: transparent; color: var(--encre); font-weight: 700; font-style: italic; }
+
+.voir-plus { display: inline-block; margin: 0 0 .5rem; }
+
+.proches { margin: .6rem 0 0; }
+.proches h4 { margin: .6rem 0 .2rem; font-size: .78rem; text-transform: uppercase; letter-spacing: .06em;
+  color: var(--encre-tres-douce); }
+.proches.ant h4 { color: var(--mal); }
+.proches.syn h4 { color: var(--bien); }
+.proches-ligne { margin: .1rem 0 .3rem; font-family: var(--serif); font-size: 1.02rem; }
+.proches-sens { font-style: italic; color: var(--encre-tres-douce); font-size: .92rem; }
+
+.lie {
+  border: 0; background: none; padding: 0; margin: 0; cursor: pointer;
+  color: var(--accent); font-family: var(--serif); font-size: inherit; text-align: left;
+  text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--accent) 35%, transparent);
+  text-underline-offset: 3px;
+}
+.lie:hover { text-decoration-color: var(--accent); }
+.lie.sans-fiche { color: inherit; text-decoration: none; cursor: default; }
+
+.etymologie-texte { margin: 0 0 .6rem; font-family: var(--serif); font-size: 1.02rem; }
+.etymologie-pour { margin: .8rem 0 .2rem; font-style: italic; color: var(--accent); font-family: var(--serif); }
+
+.liste-liee { list-style: none; margin: 0; padding: 0; }
+.liste-liee li { margin: 0 0 .45rem; font-family: var(--serif); font-size: 1.02rem; }
+.liste-liee .precision { color: var(--encre-douce); font-style: italic; }
+
+.mes-notes {
+  margin: 1.8rem 0 1rem; padding: 1rem;
+  background: var(--papier-releve); border: 1px solid var(--trait); border-radius: var(--rayon);
+}
+.mes-notes .rubrique { margin-top: 0; color: var(--accent); }
+.note-texte { margin: 0 0 .7rem; white-space: pre-wrap; font-family: var(--serif); font-size: 1.02rem; }
+.note-saisie, .saisie-texte {
+  width: 100%; padding: .65rem .75rem;
+  background: var(--papier); border: 1px solid var(--trait); border-radius: 8px;
+  font-size: 1rem; resize: vertical;
+}
+.note-saisie { font-family: var(--serif); margin-bottom: .5rem; }
+.note-saisie:focus, .saisie-texte:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+.note-etat { display: block; margin-top: .3rem; font-size: .82rem; }
+.note-retrait { margin: 0 0 .6rem; }
+
+.source { margin: 1.5rem 0 0; font-size: .8rem; color: var(--encre-tres-douce); }
+.bloc-absent { margin: 1.2rem 0; padding: 1rem; border: 1px dashed var(--trait); border-radius: var(--rayon); }
+.attente { margin: 2rem 0; text-align: center; }
+
+/* Les mots vifs : discrets, un pointillé — presque chaque mot mène quelque
+   part, et une définition peinte de liens ne se lirait plus. */
+.mv { cursor: pointer; border-bottom: 1px dotted color-mix(in srgb, var(--encre-tres-douce) 38%, transparent); }
+.citation .mv, .etymologie-texte .mv, .note-usage .mv { border-bottom-color: transparent; }
+.mv:hover { background: var(--accent-clair); border-bottom-color: var(--accent); border-radius: 2px; }
+
+/* ————— Boutons ————— */
+
+.bouton-principal {
+  display: block; width: 100%;
+  padding: .85rem 1rem; min-height: 3rem;
+  border: 0; border-radius: 10px;
+  background: var(--accent); color: var(--sur-accent);
+  font-weight: 600; cursor: pointer;
+}
+.bouton-principal:hover { background: var(--accent-fort); }
+.bouton-principal[disabled] { opacity: .5; cursor: default; }
+.bouton-discret {
+  border: 1px solid var(--trait); background: var(--papier-releve);
+  border-radius: 10px; padding: .6rem 1rem; min-height: 2.75rem; cursor: pointer;
+}
+.bouton-discret:hover { border-color: var(--accent); color: var(--accent); }
+.bouton-discret.large { display: block; width: 100%; margin-top: .6rem; }
+.lien-discret {
+  border: 0; background: transparent; color: var(--encre-tres-douce);
+  cursor: pointer; font-size: .9rem; text-decoration: underline; padding: .4rem .2rem;
+}
+.lien-discret:hover { color: var(--accent); }
+.ligne-boutons { display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; }
+.ligne-boutons .bouton-principal { flex: 1; width: auto; }
+
+/* ————— Révision ————— */
+
+.compteurs { display: flex; gap: .6rem; margin: 1rem 0 1.2rem; }
+.compteur {
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: .1rem;
+  padding: .8rem .3rem;
+  background: var(--papier-releve); border: 1px solid var(--trait); border-radius: var(--rayon);
+}
+.compteur .chiffre { font-size: 1.7rem; font-weight: 650; line-height: 1; font-family: var(--serif); }
+.compteur .etiquette-compteur { font-size: .76rem; color: var(--encre-tres-douce); text-align: center; }
+.compteur.bien .chiffre { color: var(--bien); }
+.compteur.moyen .chiffre { color: var(--moyen); }
+.compteur.mal .chiffre { color: var(--mal); }
+
+#revision-vide, #revision-rien-du-jour { margin-top: 1rem; }
+#revision-vide p { color: var(--encre-douce); }
+.bloc-leger { margin-top: 1.4rem; }
+.progres-liste { margin: 0; padding-left: 1.1rem; color: var(--encre-douce); }
+.progres-liste li { margin: .25rem 0; }
+
+.jauge { height: .45rem; background: var(--trait); border-radius: 999px; overflow: hidden; margin: .8rem 0 .3rem; }
+.jauge > div { height: 100%; background: var(--accent); width: 0; transition: width .25s ease; }
+
+.seance-tete { display: flex; align-items: center; gap: .7rem; margin: .7rem 0 1.4rem; }
+.seance-tete .jauge { flex: 1; margin: 0; }
+.bandeau-libre { margin: 0 0 1rem; padding: .5rem .8rem; border-radius: 8px;
+  background: var(--accent-clair); color: var(--accent-fort); font-size: .88rem; }
+.consigne { margin: 0 0 .8rem; color: var(--encre-tres-douce); font-size: .8rem;
+  text-transform: uppercase; letter-spacing: .06em; font-weight: 700; }
+
+#seance-enonce { margin: 0 0 1.3rem; }
+.enonce {
+  padding: 1.3rem 1.1rem; background: var(--papier-releve);
+  border: 1px solid var(--trait); border-radius: var(--rayon); box-shadow: var(--ombre);
+}
+.enonce-mot { margin: 0; font-family: var(--serif); font-size: 2rem; font-weight: 600;
+  display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; }
+.enonce-nature { margin: .2rem 0 .3rem; font-family: var(--serif); font-style: italic; color: var(--accent); }
+.enonce-definition { margin: .2rem 0 0; font-family: var(--serif); font-size: 1.25rem; line-height: 1.45; }
+.enonce-phrase { margin: 0 0 .8rem; font-family: var(--serif); font-size: 1.2rem; line-height: 1.55;
+  padding: 1.1rem; background: var(--papier-releve); border: 1px solid var(--trait); border-radius: var(--rayon); }
+.enonce-indice { margin: .4rem 0 0; color: var(--encre-douce); font-size: .95rem; }
+.trou { display: inline-block; min-width: 4rem; border-bottom: 2px solid var(--accent); color: transparent; }
+
+#seance-zone { display: flex; flex-direction: column; gap: .55rem; }
+.choix {
+  width: 100%; text-align: left; padding: .85rem 1rem; min-height: 3rem;
+  border: 1px solid var(--trait); border-radius: 10px; background: var(--papier-releve);
+  cursor: pointer; font-family: var(--serif); font-size: 1.02rem; line-height: 1.4;
+}
+.choix-mot { font-size: 1.2rem; font-weight: 600; }
+.choix:hover:not([disabled]) { border-color: var(--accent); background: var(--accent-clair); }
+.choix[disabled] { cursor: default; opacity: .75; }
+.choix.bonne { border-color: var(--bien); background: var(--bien-fond); opacity: 1; }
+.choix.mauvaise { border-color: var(--mal); background: var(--mal-fond); opacity: 1; }
+
+.saisie {
+  width: 100%; padding: .85rem 1rem; font-size: 1.2rem; font-family: var(--serif);
+  background: var(--papier-releve); border: 1px solid var(--trait); border-radius: 10px;
+}
+.saisie:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+.touches { display: flex; flex-wrap: wrap; gap: .3rem; }
+.touche {
+  min-width: 2.5rem; min-height: 2.5rem; padding: .3rem .5rem;
+  border: 1px solid var(--trait); border-radius: 8px; background: var(--papier-releve);
+  cursor: pointer; font-size: 1.05rem;
+}
+.touche:hover { border-color: var(--accent); color: var(--accent); }
+
+.retourner { margin-top: .4rem; }
+.verso {
+  padding: 1rem 1.1rem; background: var(--papier-releve);
+  border: 1px solid var(--trait); border-radius: var(--rayon);
+}
+.verso-mot { margin: 0 0 .4rem; font-family: var(--serif); font-size: 1.6rem; font-weight: 600;
+  display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; }
+.verso-sens { margin: 0 0 .35rem; font-family: var(--serif); font-size: 1.04rem; }
+.verso-sens .numero-sens { min-width: 0; }
+.verso-exemple { margin: 0 0 .5rem .9rem; font-family: var(--serif); font-style: italic; color: var(--encre-douce); }
+.verso-proches { margin: .3rem 0 0; color: var(--encre-douce); font-family: var(--serif); }
+
+.notes-boutons { display: grid; grid-template-columns: repeat(4, 1fr); gap: .4rem; }
+.note-bouton {
+  display: flex; flex-direction: column; align-items: center; gap: .1rem;
+  padding: .6rem .2rem; min-height: 3.3rem;
+  border: 1px solid var(--trait); border-radius: 10px; background: var(--papier-releve); cursor: pointer;
+}
+.note-bouton .note-libelle { font-weight: 600; font-size: .9rem; }
+.note-bouton .note-delai { font-size: .75rem; color: var(--encre-tres-douce); }
+.note-bouton.mal { border-color: color-mix(in srgb, var(--mal) 55%, var(--trait)); }
+.note-bouton.mal .note-libelle { color: var(--mal); }
+.note-bouton.moyen .note-libelle { color: var(--moyen); }
+.note-bouton.bien { border-color: color-mix(in srgb, var(--bien) 55%, var(--trait)); }
+.note-bouton.bien .note-libelle { color: var(--bien); }
+.note-bouton.facile .note-libelle { color: var(--accent); }
+
+.verdict { margin-top: 1.2rem; padding: 1rem; border-radius: var(--rayon);
+  border: 1px solid var(--trait); background: var(--papier-releve); }
+.verdict.juste { border-color: var(--bien); }
+.verdict.presque { border-color: var(--moyen); }
+.verdict.faux { border-color: var(--mal); }
+#verdict-texte { margin: 0 0 .2rem; font-size: 1.25rem; font-weight: 700; }
+.verdict.juste #verdict-texte { color: var(--bien); }
+.verdict.presque #verdict-texte { color: var(--moyen); }
+.verdict.faux #verdict-texte { color: var(--mal); }
+#verdict-remarque { margin: 0 0 .5rem; }
+#verdict-fiche .verso { border: 0; padding: .6rem 0 0; background: transparent; border-top: 1px solid var(--trait); border-radius: 0; }
+#verdict-boutons { display: flex; gap: .5rem; align-items: center; margin: .6rem 0 .4rem; flex-wrap: wrap; }
+#verdict-boutons .bouton-principal { flex: 1 1 10rem; width: auto; }
+
+.rappel-note { margin: .8rem 0 0; padding: .6rem .8rem; border-radius: 8px; background: var(--accent-clair); }
+.rappel-note-titre { font-size: .75rem; text-transform: uppercase; letter-spacing: .06em; font-weight: 700; color: var(--accent); }
+.rappel-note .note-texte { margin: .2rem 0 0; }
+
+#seance-bilan { text-align: center; }
+#seance-bilan .bouton-principal { margin: 1rem 0 .4rem; }
+#bilan-texte .lie { font-size: 1rem; }
+
+/* ————— Carnet ————— */
+
+.segments { display: flex; gap: .35rem; margin: 0 0 .8rem; }
+.segments button {
+  flex: 1; padding: .6rem .4rem; min-height: 2.75rem;
+  border: 1px solid var(--trait); background: var(--papier-releve);
+  border-radius: 10px; cursor: pointer; font-size: .92rem;
+}
+.segments button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent);
+  color: var(--sur-accent); font-weight: 600; }
+
+#carnet-filtre {
+  width: 100%; margin: 0 0 .8rem; padding: .6rem .8rem;
+  border: 1px solid var(--trait); border-radius: 10px; background: var(--papier-releve);
+}
+.carnet-tete .bouton-principal { margin-bottom: .6rem; }
+.liste-carnet { list-style: none; margin: .4rem 0 0; padding: 0; }
+.liste-carnet li { display: flex; align-items: center; gap: .4rem; border-bottom: 1px solid var(--trait); flex-wrap: wrap; }
+.ligne-carnet {
+  flex: 1; min-width: 0; display: flex; flex-direction: column; gap: .1rem; text-align: left;
+  padding: .65rem .3rem; border: 0; background: transparent; cursor: pointer;
+}
+.ligne-carnet:hover { background: var(--accent-clair); }
+.ligne-carnet .mot { font-family: var(--serif); font-size: 1.1rem; font-weight: 600; }
+.ligne-carnet .sous { color: var(--encre-douce); font-size: .9rem;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ligne-carnet .note-extrait { white-space: normal; font-family: var(--serif); }
+.liste-carnet .date { padding: 0 .3rem .5rem; font-size: .78rem; width: 100%; }
+.vide { margin: 1rem 0; }
+
+/* ————— Formulaire d'un mot à soi ————— */
+
+.formulaire { display: flex; flex-direction: column; gap: .9rem; margin-top: .6rem; }
+.champ { display: flex; flex-direction: column; gap: .25rem; }
+.champ-titre { font-weight: 600; font-size: .92rem; }
+.champ-aide { font-size: .8rem; color: var(--encre-tres-douce); }
+.sens-perso { border: 1px solid var(--trait); border-radius: var(--rayon); padding: .7rem .8rem; margin: 0; }
+.sens-perso legend { font-weight: 600; font-size: .92rem; padding: 0 .3rem; }
+.un-sens { display: flex; flex-direction: column; gap: .35rem; padding: .5rem 0 .7rem;
+  border-bottom: 1px dashed var(--trait); margin-bottom: .5rem; }
+.un-sens .numero-sens { font-size: 1rem; }
+.un-sens .sens-d { font-family: var(--serif); }
+.avis-dico { font-size: .9rem; color: var(--encre-douce); }
+.avis-dico:empty { display: none; }
+.erreur { color: var(--mal); margin: 0; }
+.pied-formulaire { position: sticky; bottom: 0; padding: .6rem 0; background: var(--papier); }
+.supprimer-mot { align-self: flex-start; color: var(--mal); }
+
+/* ————— Réglages ————— */
+
+.bloc { margin: 0 0 1.4rem; padding: 1rem; background: var(--papier-releve);
+  border: 1px solid var(--trait); border-radius: var(--rayon); }
+.bloc h3 { margin: 0 0 .6rem; font-size: 1rem; }
+.bloc h4 { margin: 1.1rem 0 .45rem; font-size: .9rem; }
+.bloc p { margin: .35rem 0; }
+.bloc .segments { margin-bottom: .3rem; }
+.champ-nombre { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.champ-nombre input {
+  width: 5rem; padding: .5rem .6rem; background: var(--papier);
+  border: 1px solid var(--trait); border-radius: 8px; text-align: center;
+}
+.bascule { display: flex; align-items: center; gap: .6rem; cursor: pointer; margin: .5rem 0; min-height: 2.5rem; }
+.bascule input { width: 1.2rem; height: 1.2rem; accent-color: var(--accent); }
+.etat-paquet { font-weight: 600; }
+.ligne-voix { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: .6rem; }
+.ligne-voix select { flex: 1 1 12rem; min-width: 0; }
+.ligne-maj { display: flex; gap: .6rem; align-items: center; flex-wrap: wrap; }
+.marche-a-suivre { margin: .5rem 0 0; padding-left: 1.3rem; color: var(--encre-douce); }
+.adresse-partage { margin: .6rem 0 0; font-size: .82rem; color: var(--encre-tres-douce); word-break: break-all; }
+.ligne-sauvegarde { margin-top: .6rem; }
+
+/* ————— Bandeaux ————— */
+
+#mise-a-jour, #annonce {
+  position: fixed; left: 50%; z-index: 70;
+  bottom: calc(var(--barre-h) + env(safe-area-inset-bottom) + .6rem);
+  transform: translate(-50%, 1rem); opacity: 0;
+  width: min(34rem, calc(100vw - 1.5rem));
+  padding: .8rem 1rem; border-radius: var(--rayon);
+  background: var(--encre); color: var(--papier); box-shadow: var(--ombre);
+  transition: transform .2s ease, opacity .2s ease;
+}
+#mise-a-jour.visible, #annonce.visible { transform: translate(-50%, 0); opacity: 1; }
+#mise-a-jour p { margin: 0 0 .6rem; }
+.maj-boutons { display: flex; gap: .6rem; align-items: center; }
+.maj-boutons .bouton-principal { flex: 1; width: auto; background: var(--papier); color: var(--encre); }
+.maj-boutons .lien-discret { color: var(--papier); }
+#annonce { display: flex; gap: .8rem; align-items: center; justify-content: space-between; }
+body.fiche-ouverte #annonce, body.panneau-ouvert #annonce { bottom: calc(env(safe-area-inset-bottom) + 1rem); z-index: 90; }
+.lien-annonce { border: 0; background: transparent; color: var(--papier); font-weight: 700;
+  text-decoration: underline; cursor: pointer; padding: .3rem; }
+
+/* ————— Onglets ————— */
+
+#onglets {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 20;
+  display: flex; justify-content: center;
+  height: calc(var(--barre-h) + env(safe-area-inset-bottom));
+  padding-bottom: env(safe-area-inset-bottom);
+  background: var(--papier-releve); border-top: 1px solid var(--trait);
+}
+#onglets button {
+  position: relative; flex: 1; max-width: 9rem;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .05rem;
+  border: 0; background: transparent; color: var(--encre-tres-douce); cursor: pointer; font-size: .78rem;
+}
+#onglets button[aria-current="true"] { color: var(--accent); font-weight: 700; }
+#onglets .pictogramme { font-size: 1.3rem; line-height: 1.2; }
+.pastille-onglet {
+  position: absolute; top: .35rem; left: calc(50% + .45rem);
+  min-width: 1.2rem; height: 1.2rem; padding: 0 .3rem; border-radius: 999px;
+  background: var(--accent); color: var(--sur-accent); font-size: .7rem; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+}
+
+@media (min-width: 48rem) {
+  .vedette-mot { font-size: 2.7rem; }
+  .definition { font-size: 1.1rem; }
+}
+
+/* ————— La Langue verte : ce qui s'ajoute au Mot juste ————— */
+
+.astuce { margin-top: .4rem; line-height: 1.5; }
+.astuce em { font-family: var(--serif); color: var(--encre-douce); }
+
+/* Du français vers l'argot : « En argot, “argent” se dit… » */
+.bloc-equivalents {
+  margin: 0 0 1.2rem; padding: .9rem 1rem 1rem;
+  background: var(--papier-releve); border: 1px solid var(--trait);
+  border-left: 4px solid var(--accent); border-radius: var(--rayon); box-shadow: var(--ombre);
+}
+.bloc-equivalents .rubrique { margin: 0 0 .6rem; color: var(--accent); }
+.bloc-equivalents .voir-plus { margin: .6rem 0 0; }
+.voisin.xixe { border-style: dashed; color: var(--encre-douce); }
+
+.pastille.xixe { background: var(--or-clair); color: var(--or); }
+
+/* Les marques d'usage : l'argot en vert, la rudesse en brique, le milieu en or. */
+.marque.argot { background: var(--accent); color: var(--sur-accent); font-style: normal; font-weight: 600; }
+.marque.rude { background: var(--rude-clair); color: var(--rude); }
+.marque.milieu { background: var(--or-clair); color: var(--or); }
+
+/* Les thèmes */
+.themes-fiche { display: flex; flex-wrap: wrap; gap: .35rem; margin: -.4rem 0 1rem; }
+.theme-pastille {
+  display: inline-flex; align-items: baseline; gap: .35rem;
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, var(--trait)); background: var(--accent-clair);
+  color: var(--accent-fort); border-radius: 999px; padding: .3rem .75rem; cursor: pointer; font-size: .88rem;
+}
+.theme-pastille:hover { border-color: var(--accent); }
+.theme-pastille .carte-theme-nom { font-family: var(--sans); font-size: .9rem; font-weight: 600; color: inherit; }
+.theme-pastille .carte-theme-nombre { font-size: .75rem; color: var(--encre-tres-douce); }
+.theme-pastille.tous { background: transparent; }
+
+.grille-themes { display: grid; grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); gap: .6rem;
+  margin: 1rem 0 1.5rem; }
+.carte-theme {
+  display: flex; flex-direction: column; align-items: flex-start; gap: .2rem; text-align: left;
+  padding: .85rem 1rem; min-height: 6.2rem; cursor: pointer;
+  background: var(--papier-releve); border: 1px solid var(--trait); border-radius: var(--rayon);
+  box-shadow: var(--ombre);
+}
+.carte-theme:hover, .carte-theme:focus-visible { border-color: var(--accent); outline: none; }
+.carte-theme-nom { font-family: var(--serif); font-size: 1.12rem; font-weight: 600; color: var(--accent-fort); }
+.carte-theme .carte-theme-nombre { font-size: .8rem; color: var(--encre-tres-douce); }
+.carte-theme-desc { font-size: .88rem; color: var(--encre-douce); line-height: 1.35; }
+.retour-themes { padding-left: 0; }
+#explorer-theme h2 { margin-top: .4rem; }
+#explorer-theme .segments { margin-top: .8rem; max-width: 24rem; }
+
+/* Le sens courant d'un mot qui a aussi un sens d'argot */
+.sens-courant {
+  margin: 0 0 1.2rem; padding: .6rem .8rem; border-radius: 8px;
+  background: var(--papier-releve); border: 1px dashed var(--trait);
+  font-family: var(--serif); font-size: .98rem; color: var(--encre-douce);
+}
+.sens-courant-titre { font-family: var(--sans); font-size: .78rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .05em; color: var(--encre-tres-douce); }
+.sens-courant .discret { font-family: var(--sans); font-size: .85rem; }
+
+/* Autres mots pour le même sens */
+.memes-ligne { margin: .15rem 0 .5rem; font-family: var(--serif); font-size: 1.02rem; line-height: 1.6; }
+.memes-concept { font-style: italic; color: var(--encre-tres-douce); }
+.memes-ligne .lien-discret { font-size: .9rem; padding: 0; }
+
+/* Les dictionnaires du XIXᵉ siècle */
+.anciens .avertissement-ancien { margin: -.2rem 0 .8rem; font-size: .8rem; color: var(--encre-tres-douce);
+  font-style: italic; }
+.ancien {
+  margin: 0 0 .9rem; padding: .8rem 1rem .6rem;
+  background: var(--papier-releve); border: 1px solid var(--trait); border-radius: var(--rayon);
+  border-top: 3px solid var(--or);
+}
+.ancien-source { margin: 0 0 .5rem; font-size: .82rem; color: var(--encre-tres-douce); }
+.ancien-auteur { font-weight: 700; color: var(--or); text-transform: uppercase; letter-spacing: .06em; }
+.ancien-article + .ancien-article { margin-top: .7rem; padding-top: .6rem; border-top: 1px dotted var(--trait); }
+.ancien-texte { margin: 0 0 .45rem; font-family: var(--serif); font-size: 1.02rem; line-height: 1.55;
+  white-space: pre-line; }
+.ancien-vedette { font-variant: small-caps; font-weight: 700; letter-spacing: .02em; color: var(--encre); }
+.ancien-nature { color: var(--encre-tres-douce); }
+.ancien-texte i { color: var(--encre-douce); }
+.ancien-pied { display: flex; flex-wrap: wrap; gap: .3rem .6rem; align-items: center; margin: .2rem 0 .2rem; }
+.ancien-pied .discret { font-size: .8rem; }
+.anciens.principal .rubrique { color: var(--or); }
+
+.du-jour-exemple { margin: 0 0 .45rem; font-family: var(--serif); font-style: italic; color: var(--encre-douce);
+  font-size: .98rem; }
+
+/* Cinq onglets sur un petit téléphone */
+@media (max-width: 23rem) {
+  #onglets button { font-size: .7rem; }
+  #onglets .pictogramme { font-size: 1.15rem; }
+}
+
+/* ————— Sur un ordinateur ————— */
+
+@media (min-width: 64rem) {
+  body { padding-bottom: 0; padding-left: var(--rail); font-size: 16.5px; }
+
+  #onglets {
+    top: 0; right: auto; width: var(--rail); height: auto;
+    flex-direction: column; justify-content: flex-start; gap: .2rem;
+    padding: 1rem 0 0; border-top: 0; border-right: 1px solid var(--trait);
+  }
+  #onglets button { flex: 0 0 auto; max-width: none; width: 100%; height: 4.6rem; font-size: .8rem; }
+  #onglets button[aria-current="true"] { background: var(--accent-clair); }
+  .pastille-onglet { top: .55rem; }
+
+  #barre, #scene { max-width: 50rem; }
+
+  /* La fiche s'ouvre à droite ; la liste reste à gauche, et défile seule. */
+  body.fiche-ouverte { overflow: auto; }
+  body.fiche-ouverte #barre, body.fiche-ouverte #scene {
+    max-width: var(--colonne); margin-left: 0; margin-right: 0;
+  }
+  #fiche {
+    left: calc(var(--rail) + var(--colonne) + 1.5rem); right: 0; top: 0; bottom: 0;
+    border-left: 1px solid var(--trait); box-shadow: -8px 0 24px rgba(0, 0, 0, .05);
+    padding: 0 2rem 3rem;
+  }
+  body.fiche-ouverte .resultat .apercu { white-space: normal; }
+  #panneau-perso { left: var(--rail); }
+
+  #mise-a-jour, #annonce { bottom: 1.2rem; left: calc(50% + var(--rail) / 2); }
+  body.fiche-ouverte #annonce, body.panneau-ouvert #annonce { bottom: 1.2rem; }
+
+  .grille-themes { grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr)); }
+}
+
+@media (min-width: 90rem) {
+  #barre, #scene { max-width: 56rem; }
+  body.fiche-ouverte #barre, body.fiche-ouverte #scene { max-width: 32rem; }
+  #fiche { left: calc(var(--rail) + 33.5rem); }
+}
