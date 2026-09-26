@@ -365,11 +365,14 @@
     }
     const ligne = element('div', 'ligne-voix');
     const menu = element('select', 'saisie-texte');
-    const auto = element('option', null, 'Automatique');
+    menu.setAttribute('aria-label', 'Voix');
+    const nommer = (v) => v.libelle + (v.locale ? '' : ' (en ligne)');
+    // Le choix automatique dit quelle voix il prend : France d'abord.
+    const auto = element('option', null, 'Automatique' + (Voix.automatique ? ' : ' + nommer(Voix.automatique) : ''));
     auto.value = '';
     menu.appendChild(auto);
     for (const v of voix) {
-      const o = element('option', null, v.nom + (v.locale ? '' : ' (en ligne)'));
+      const o = element('option', null, nommer(v));
       o.value = v.uri;
       if (reglages.voixFr && reglages.voixFr.uri === v.uri) o.selected = true;
       menu.appendChild(o);
@@ -391,7 +394,7 @@
     Sauvegarde.dessiner(e.zoneSauvegarde);
     Installer.dessiner();
     const version = (racine.MiseAJour && MiseAJour.version) || '';
-    e.versions.textContent = 'Application ' + (version || 'v1.0.0') + ' · dictionnaire du '
+    e.versions.textContent = 'Application ' + (version || 'v1.0.1') + ' · dictionnaire du '
       + Outils.dateLisible(manifeste.construit + 'T12:00:00') + '.';
     await dessinerDictionnaire();
   }

@@ -542,7 +542,9 @@ mark.cible { background: transparent; color: var(--encre); font-weight: 700; fon
 .bascule input { width: 1.2rem; height: 1.2rem; accent-color: var(--accent); }
 .etat-paquet { font-weight: 600; }
 .ligne-voix { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: .6rem; }
-.ligne-voix select { flex: 1 1 12rem; min-width: 0; }
+/* Assez large pour « Automatique : Thomas — France » : sur un téléphone, le
+ * menu prend toute la ligne et « Essayer » passe dessous. */
+.ligne-voix select { flex: 1 1 17rem; min-width: 0; }
 .ligne-maj { display: flex; gap: .6rem; align-items: center; flex-wrap: wrap; }
 .marche-a-suivre { margin: .5rem 0 0; padding-left: 1.3rem; color: var(--encre-douce); }
 .adresse-partage { margin: .6rem 0 0; font-size: .82rem; color: var(--encre-tres-douce); word-break: break-all; }

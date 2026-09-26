@@ -176,5 +176,78 @@ const espacees = Revision.espacer([
 cas('les deux fiches d’un mot ne se suivent pas', espacees.every((f, i) => i === 0 || f.ref !== espacees[i - 1].ref),
   espacees.map((f) => f.id));
 
+// ── La voix ─────────────────────────────────────────────────────────────────
+// Des listes de voix telles que les rendent les systèmes, dans leur ordre :
+// la canadienne arrive souvent la première, et c'est elle qu'on entendait.
+console.log('Voix');
+function voixSimulees(liste, enLigne = true) {
+  const parlees = [];
+  const ctx = {
+    String, RegExp, Array, Object, Number, Map, Set, Intl,
+    setTimeout: () => 0,
+    document: { addEventListener() {}, dispatchEvent() {} },
+    CustomEvent: class { constructor(t) { this.type = t; } },
+    navigator: { onLine: enLigne },
+    speechSynthesis: { getVoices: () => liste, addEventListener() {}, cancel() {}, speak: (p) => parlees.push(p) },
+    SpeechSynthesisUtterance: class { constructor(t) { this.text = t; } },
+  };
+  ctx.window = ctx;
+  vm.createContext(ctx);
+  vm.runInContext(lire('js/voix.js'), ctx, { filename: 'js/voix.js' });
+  return { Voix: ctx.Voix, parlees };
+}
+const apple = (nom, lang, uri) => ({ name: nom, lang, localService: true, voiceURI: 'com.apple.' + uri });
+const IPHONE = [
+  apple('Amélie', 'fr-CA', 'voice.compact.fr-CA.Amelie'),
+  apple('Eddy (français (Canada))', 'fr-CA', 'eloquence.fr-CA.Eddy'),
+  apple('Eddy (français (France))', 'fr-FR', 'eloquence.fr-FR.Eddy'),
+  apple('Flo (français (France))', 'fr-FR', 'eloquence.fr-FR.Flo'),
+  apple('Grand-mère (français (France))', 'fr-FR', 'eloquence.fr-FR.Grandma'),
+  apple('Samantha', 'en-US', 'voice.compact.en-US.Samantha'),
+  apple('Thomas', 'fr-FR', 'voice.compact.fr-FR.Thomas'),
+];
+let v = voixSimulees(IPHONE).Voix;
+cas('iPhone : Thomas (France), pas Amélie (Canada) ni Eddy', v.retenue && v.retenue.nom === 'Thomas', v.retenue);
+cas('iPhone : la liste des Réglages commence par la France, finit par le Canada',
+  v.lister()[0].nom === 'Thomas' && /Canada/.test(v.lister().at(-1).nom), v.lister().map((x) => x.libelle));
+cas('iPhone : la région est dite quand le nom la tait', v.lister()[0].libelle === 'Thomas — France'
+  && v.lister().some((x) => x.libelle === 'Amélie — Canada'), v.lister().map((x) => x.libelle));
+v = voixSimulees([...IPHONE, apple('Audrey (amélioré)', 'fr-FR', 'voice.enhanced.fr-FR.Audrey')]).Voix;
+cas('iPhone : une voix améliorée téléchargée passe devant la compacte', v.retenue.nom === 'Audrey (amélioré)', v.retenue);
+const android = (nom, lang) => ({ name: nom, lang, localService: true, voiceURI: nom });
+v = voixSimulees([android('Français Canada', 'fr-CA'), android('Français France', 'fr-FR'), android('English United States', 'en-US')]).Voix;
+cas('Android : fr-FR, pas fr-CA venu d’abord', v.retenue.nom === 'Français France', v.retenue);
+v = voixSimulees([android('fr_CA', 'fr_CA'), android('fr_FR', 'fr_FR')]);
+cas('Android, balises à tiret bas : fr_FR retenue', v.Voix.retenue.nom === 'fr_FR', v.Voix.retenue);
+v.Voix.dire('bagnole');
+cas('l’énoncé porte la voix et une balise bien formée', v.parlees.length === 1
+  && v.parlees[0].voice.name === 'fr_FR' && v.parlees[0].lang === 'fr-FR', v.parlees[0] && v.parlees[0].lang);
+v = voixSimulees([android('Français (Canada)', 'fr'), android('eSpeak French', 'fr')]).Voix;
+cas('balise sans région : le nom « Canada » suffit à la reléguer', v.retenue.nom === 'eSpeak French', v.retenue);
+const windows = (nom, lang, locale) => ({ name: nom, lang, localService: locale, voiceURI: nom });
+const EDGE = [
+  windows('Microsoft Sylvie Online (Natural) - French (Canada)', 'fr-CA', false),
+  windows('Microsoft Denise Online (Natural) - French (France)', 'fr-FR', false),
+  windows('Microsoft Hortense - French (France)', 'fr-FR', true),
+  windows('Microsoft Charline Online (Natural) - French (Belgium)', 'fr-BE', false),
+];
+v = voixSimulees(EDGE).Voix;
+cas('Edge : la voix française de l’appareil, avant les voix en ligne', v.retenue.nom === 'Microsoft Hortense - French (France)', v.retenue);
+cas('Edge : pas de région répétée quand le nom la dit', v.lister()[0].libelle === 'Microsoft Hortense - French (France)'
+  && v.lister().at(-1).nom.includes('Canada'), v.lister().map((x) => x.libelle));
+const QUEBEC = [windows('Microsoft Caroline - French (Canada)', 'fr-CA', true), windows('Google français', 'fr-FR', false)];
+v = voixSimulees(QUEBEC).Voix;
+cas('en ligne : une voix de France en ligne plutôt qu’une canadienne', v.retenue.nom === 'Google français', v.retenue);
+v = voixSimulees(QUEBEC, false).Voix;
+cas('hors ligne : la voix de l’appareil, seule à pouvoir parler', v.retenue.nom === 'Microsoft Caroline - French (Canada)', v.retenue);
+v = voixSimulees(IPHONE).Voix;
+v.regler({ voix: true, voixFr: { uri: 'com.apple.voice.compact.fr-CA.Amelie', nom: 'Amélie' } });
+cas('une voix choisie dans les Réglages reste la sienne, même canadienne', v.retenue.nom === 'Amélie', v.retenue);
+cas('le choix automatique, lui, ne bouge pas', v.automatique.nom === 'Thomas', v.automatique);
+v.regler({ voix: true, voixFr: { uri: 'disparue', nom: 'Disparue' } });
+cas('une voix disparue rend la main au choix automatique', v.retenue.nom === 'Thomas', v.retenue);
+v = voixSimulees([windows('Microsoft Zira - English (United States)', 'en-US', true)]).Voix;
+cas('aucune voix française : rien n’est lu', v.retenue === null && v.possible() === false && v.dire('flic') === false);
+
 console.log(`\n${total - fautes}/${total} cas conformes`);
 process.exit(fautes ? 1 : 0);
